@@ -3,6 +3,7 @@ using AuditLogs.Api.Dtos;
 using AuditLogs.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuditLogs.Api.Controllers
 {
@@ -40,6 +41,29 @@ namespace AuditLogs.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request. :(");
             }
 
+        }
+
+        [HttpGet]
+        public async Task<IReadOnlyList<AuditLogEntry>> Get(string? user, string? action, DateTime? fromUtc, DateTime? toUtc)
+        {
+            var query = _dbContext.AuditLogEntries
+                .AsNoTracking()
+                .AsQueryable();
+            
+            if(!string.IsNullOrEmpty(user))
+                query = query.Where(x => x.PerformedBy == user);
+            
+            if(!string.IsNullOrEmpty(action))
+                query = query.Where(x => x.Action == action);
+            
+            if(fromUtc.HasValue)
+                    query = query.Where(x => x.OccuredOnUtc >= fromUtc.Value);
+            
+            if(toUtc.HasValue)
+                query = query.Where(x => x.OccuredOnUtc <= toUtc.Value);
+            
+            return await query.OrderByDescending(x => x.OccuredOnUtc)
+                .ToListAsync();
         }
     }
 }
