@@ -36,7 +36,7 @@ namespace AuditLogs.Api.Controllers
                 await _dbContext.SaveChangesAsync();
                 return Ok(entry.Entity);
             }
-            catch (Exception ex)
+            catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request. :(");
             }
