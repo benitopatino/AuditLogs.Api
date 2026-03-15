@@ -27,7 +27,7 @@ public class AppDbContext :DbContext
                 .HasMaxLength(200)
                 .IsRequired();
 
-            entity.HasIndex(x => x.OccuredOnUtc);
+            entity.HasIndex(x => x.OccuredInUtc);
         });
     }
 }

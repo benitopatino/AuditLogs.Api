@@ -44,25 +44,25 @@ namespace AuditLogs.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IReadOnlyList<AuditLogEntry>> Get(string? user, string? action, DateTime? fromUtc, DateTime? toUtc)
+        public async Task<IReadOnlyList<AuditLogEntry>> Get(SearchQueryRequest request)
         {
             var query = _dbContext.AuditLogEntries
                 .AsNoTracking()
                 .AsQueryable();
             
-            if(!string.IsNullOrEmpty(user))
-                query = query.Where(x => x.PerformedBy == user);
+            if(!string.IsNullOrEmpty(request.User))
+                query = query.Where(x => x.PerformedBy == request.User);
             
-            if(!string.IsNullOrEmpty(action))
-                query = query.Where(x => x.Action == action);
+            if(!string.IsNullOrEmpty(request.Action))
+                query = query.Where(x => x.Action == request.Action);
             
-            if(fromUtc.HasValue)
-                    query = query.Where(x => x.OccuredOnUtc >= fromUtc.Value);
+            if(request.FromUtc.HasValue)
+                    query = query.Where(x => x.OccuredInUtc >= request.FromUtc.Value);
             
-            if(toUtc.HasValue)
-                query = query.Where(x => x.OccuredOnUtc <= toUtc.Value);
+            if(request.ToUtc.HasValue)
+                query = query.Where(x => x.OccuredInUtc <= request.ToUtc.Value);
             
-            return await query.OrderByDescending(x => x.OccuredOnUtc)
+            return await query.OrderByDescending(x => x.OccuredInUtc)
                 .ToListAsync();
         }
     }

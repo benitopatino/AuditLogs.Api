@@ -7,6 +7,6 @@ public class AuditLogEntry
     public string Entity { get; set; } = string.Empty;
     public string? EntityId { get; set; } = string.Empty;
     public string PerformedBy { get; set; } = string.Empty;
-    public DateTime OccuredOnUtc { get; set; } =  DateTime.UtcNow;
+    public DateTime OccuredInUtc { get; set; } =  DateTime.UtcNow;
     public string? MetadataJson { get; set; } = string.Empty;
 }
